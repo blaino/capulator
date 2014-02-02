@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Capulator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+  </head>
+  
+  <body>
+    <script type=text/javascript src="{{ url_for('static', filename='js/jquery-1.10.2.min.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/jquery-1.10.2.min.map') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/jquery.validate.min.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/additional-methods.min.js') }}"></script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+    <div class=page>
+      <body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+
+	  <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/">Capulator</a>
+            </div>
+            <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+		<li ><a href="/">Home</a></li>
+		<li ><a href="/basic">Basic</a></li>
+		<li ><a href="/show_scenarios">Advanced</a></li>
+		<li><a href="/about">About</a></li>
+		<li><a href="/contact">Contact</a></li>
+              </ul>
+
+    	      {% if not current_user.is_authenticated() %}
+    	      <form class="navbar-form navbar-right" action="{{ url_for_security('login') }}">
+		<button type="submit" class="btn btn-success" value=Login>Sign in</button>
+              </form>
+    	      {% else %}
+    	      <form class="navbar-form navbar-right" action="{{ url_for_security('logout') }}">
+		<button type="submit" class="btn btn-success" value=Login>Sign out</button>
+              </form>
+    	      {% endif %}
+
+	      <form class="navbar-form navbar-right" action="{{ url_for_security('register') }}">
+		<button type="submit" class="btn btn-success" value=register >Sign Up</button>
+              </form>
+
+            </div>
+	  </div>
+	</div>
+      </body>
+      
+      {% block body %}
+
+      {% endblock %}
+      
+    </div>
+</html>
+
+
+
+

@@ -1,0 +1,434 @@
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+<script>
+  function loadSavedScenario(x) {
+      window.location.replace("/show_scenarios/" + x.value);
+  }
+
+  function deleteSelected() {
+      var y = $('#saved :selected').val()
+      window.location.replace("/delete/" + y);
+  }
+  
+</script>
+
+<div id="wrap">
+{% extends "layout.html" %}
+{% block body %}
+  <div class="container">
+    <form action="{{ url_for('add_scenario' ) }}" method=post id="advancedForm" class="form-horizontal">
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+	<h4><label for="inputEmail3" class="col-md-1 control-label">Scenario</label></h4>
+	<div class="col-md-3">
+	  <input class="form-control scenario" type="text" size=12 name="title" id="title" value="{{scenarios[index].title}}">
+	</div>
+      </div>
+      <div class="row">
+	<div class="col-md-4">
+	  <table class="table" id="table1">
+	    <tr>
+	      <td>
+		<h4>Equity Requirement</h4>
+	      </td>
+	      <td>
+	    	<div class="input-group basic-input"></div>
+	      </td>
+	    </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Year 1 Cash on Cash is the Year 1 Net Cash Flow divided by Equity Investment">
+		  Year 1 Cash on Cash
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="cash_on_cash" id="cash_on_cash" value={{scenarios[index].cash_on_cash}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+            </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Loan to value of acquisition price (target)">
+		  Loan-to-Value  
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="target_ltv" id="target_ltv" value={{scenarios[index].target_ltv}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+            </tr>
+            <tr>
+	      <td>
+		<h4>First Mortgage</h4>
+	      </td>
+	      <td>
+		<div class="input-group basic-input"></div>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Interest rate of the first mortgage">
+		  Interest
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="number form-control right" name="interest" id="interest" value={{scenarios[index].interest}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Amortization period of first mortgage expressed in years.">
+		  Amortization
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="greaterThanZero form-control right" name="amort" id="amort" value={{scenarios[index].amort}}>
+		  <span class="input-group-addon mono">y</span>
+		</div>
+	      </td>
+            </tr>
+            	    <tr>
+	      <td>
+		<h4>Mezzanine</h4>
+	      </td>
+	      <td>
+		<div class="input-group basic-input"></div>
+	      </td>
+	    </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Mezzanine debt percentage of capital stack">
+		  Mezzanine Debt
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="mezz_debt" id="mezz_debt" value={{scenarios[index].mezz_debt}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+            </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Interest rate for mezzanine loan">
+		  Mezzanine Rate
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="mezz_rate" id="mezz_rate" value={{scenarios[index].mezz_rate}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+            </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Interest only (yes or no)">
+		  Interest Only
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="yesno form-control right" name="mezz_interest_only" id="mezz_interest_only"
+			 value={% if scenarios[index].mezz_interest_only %}Yes{% else %}No{% endif %}>
+		  <span class="input-group-addon mono">&nbsp</span>
+		</div>
+	      </td>
+            </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Secured loan (yes or no)">
+		  Secured
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="yesno form-control right" name="mezz_secured" id="mezz_secured"
+			 value={% if scenarios[index].mezz_secured %}Yes{% else %}No{% endif %}>
+		  <span class="input-group-addon mono">&nbsp</span>
+		</div>
+	      </td>
+            </tr>
+	    <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Amortization period of mezzanine loan expressed in years">
+		  Amortization
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="greaterThanZero form-control right" name="mezz_amort" id="mezz_amort" value={{scenarios[index].mezz_amort}}>
+		  <span class="input-group-addon mono">y</span>
+		</div>
+	      </td>
+            </tr>
+	  </table>
+	</div>
+	<div class="col-md-4">
+	  <table class="table" id="table1">
+            <tr>
+	      <td>
+		<h4>Transaction Costs</h4>
+	      </td>
+	      <td>
+		<div class="input-group basic-input"></div>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Transfer costs of acquisition">
+		  Transfer Cost
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="transfer_cost" id="transfer_cost" value={{scenarios[index].transfer_cost}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+
+	      </td>
+            </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Buyer's percentage share of transfer costs">
+		  Buyer's Share
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="transfer_buyer_share" id="transfer_buyer_share" value={{scenarios[index].transfer_buyer_share}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+            </tr>
+	    <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Recordation costs of mortgages per $1000">
+		  Recordation
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">$</span>
+		  <input type=text class="dollar form-control right" name="recordation_cost" id="recordation_cost" value={{scenarios[index].recordation_cost}}>
+		  <span class="input-group-addon mono">&nbsp</span>
+		</div>
+	      </td>
+            </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Buyer's percentage share of recordation costs">
+		  Buyer's Share
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="recordation_buyer_share" id="recordation_buyer_share" value={{scenarios[index].recordation_buyer_share}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Finance Fees (e.g., appraisal, Phae I, Lender Fees, Legal, etc.)">
+		  Finance Fees
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="finance" id="finance" value={{scenarios[index].finance}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<h4>Appreciation and Hold</h4>
+	      </td>
+	      <td>
+		<div class="input-group basic-input"></div>
+	      </td>
+	    </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Percentage Appreciation or Depreciation of Income Over Hold Period
+				 (1% appreciation per year of hold period reasonable default, e.g., 5 year hold, 5% appreciation)">
+		  Income Appreciation
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="income_appr" id="income_appr" value={{scenarios[index].income_appr}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+            </tr>
+            <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Percentage Appreciation or Depreciation of Asset Over Hold Period
+				 (1% appreciation per year of hold period reasonable default, e.g., 5 year hold, 5% appreciation)">
+		  Asset Appreciation
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="percentage form-control right" name="apprec_depr" id="apprec_depr" value={{scenarios[index].apprec_depr}}>
+		  <span class="input-group-addon mono">%</span>
+		</div>
+	      </td>
+            </tr>
+	    <tr>
+	      <td>
+		<a class="btn large primary has_popover" rel="popover"
+		   data-content="Projected hold period expressed in years">
+		  Holding Period
+		</a>
+	      </td>
+	      <td align="right">
+		<div class="input-group basic-input">
+		  <span class="input-group-addon mono">&nbsp</span>
+		  <input type=text class="greaterThanZero form-control right" name="holding_period" id="holding_period" value={{scenarios[index].holding_period}}>
+		  <span class="input-group-addon mono">y</span>
+		</div>
+	      </td>
+            </tr>
+	  </table>
+	</div>
+	<div class="col-md-4" id="results-column">
+	  <div class="panel panel-default">
+	  <table class="table">
+	    <tr>
+	      <td>
+		<h4>Results</h4>
+	      </td>
+	    </tr>
+	  </table>
+	    <div class="panel-body">
+	      <table class="table">
+		<tr>
+		  <td>Cash Flow</td>
+		  <td align="right">{{ '%.2f' % result.yield_per}}%</td>
+		</tr>
+		<tr>
+		  <td>Loan Paydown</td>
+		  <td align="right">{{ '%.2f' % result.amort_first_mort_per}}%</td>
+		</tr>
+		<tr>
+		  <td>Loan Paydown - Mezz</td>
+		  <td align="right">{{ '%.2f' % result.amort_mezz_per}}%</td>
+		</tr>
+		<tr>
+		  <td>Gain on Sale</td>
+		  <td align="right">{{ '%.2f' % result.appr_per}}%</td>
+		</tr>
+	      </table>
+	      <table class="table">
+		<tr>
+		  <td>
+                    <a class="btn large primary has_popover" rel="popover"
+		       data-content="For the purposes of this tool, IRR calculation holds equity yield cash on cash constant over the hold period">
+                      <strong>IRR</strong>
+		    </a>
+                  </td>
+		  <td align="right"><strong>{{ '%.2f' % result.irr}}%</strong></td>
+		</tr>
+		<tr>
+		  <td>
+                    <a class="btn large primary has_popover" rel="popover"
+		       data-content="Yadda yadda yadda">
+                      <strong>Cap Rate</strong>
+		    </a>
+                  </td>
+		  <td align="right"><strong>{{ '%.2f' % result.cap_rate}}%</strong></td>
+		</tr>
+		<tr>
+		  <td>
+                    <a class="btn large primary has_popover" rel="popover"
+		       data-content="Offer Price Cap Rate accounts for transaction costs while maintaining year 1 cash on cash requirement">
+                      <strong>Offer Price Cap Rate</strong>
+		    </a>
+                  </td>
+		  <td align="right"><strong>{{ '%.2f' % result.op_cap_rate}}%</strong></td>
+		</tr>
+	      </table>
+	      <p align="center"><input type=submit value="Capulate!" class="btn btn-primary"></p>
+	    </div>
+	  </div>
+	  <form name="scenarioSelector" class="form-inline" role="form">
+	    <h4>Saved Scenarios</h4>
+	    <div class="form-group col-xs-10">
+	      <select id='saved' onchange="loadSavedScenario(this)" class="form-control"> 
+		{% for i in range(scenarios|length) %}
+		{% if i == index %}
+		<option value="{{ scenarios[i].id }}" selected>{{ scenarios[i].title }}</option>
+		{% else %}
+		<option value="{{ scenarios[i].id }}">{{ scenarios[i].title }}</option>
+		{% endif %}
+		{% else %}
+		<li><em>Unbelievable.  No saved scenarios here so far</em>
+		  {% endfor %}
+	      </select>
+	    </div>
+	    <div class="form-group">
+	      &nbsp
+	      <input type="button" class="btn btn-default" value="Delete" onclick="deleteSelected()">
+	    </div>
+	  </form>
+	</div>
+      </div>
+    </form>
+    <script>
+      cap.setupValidation();
+      cap.validate("#advancedForm");
+      cap.toggleMezzanine();
+      $(".has_popover").popover({offset: 10, trigger: 'hover'});
+    </script>
+  </div>
+
+  <div class="container">  
+    <!-- old place for form above -->
+  </div>
+
+</container>
+{% endblock %}
+</div>
+
